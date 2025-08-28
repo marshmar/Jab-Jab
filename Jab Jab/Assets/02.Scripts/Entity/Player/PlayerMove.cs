@@ -6,14 +6,16 @@ public class PlayerMove : MonoBehaviour
 {
     private PlayerInput _input;
     private InputAction _moveAction;
+    private Transform   _tr;
     private Rigidbody   _rigid;
     private Vector3     _moveDir;
-    private float       _moveSpeed;
+    private float       _moveSpeed = 10.0f;
 
     public float MoveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
 
     private void Awake()
     {
+        _tr = this.GetComponentSafe<Transform>();
         _rigid = this.GetComponentSafe<Rigidbody>();
         _input = this.GetComponentSafe<PlayerInput>();
 
@@ -45,7 +47,8 @@ public class PlayerMove : MonoBehaviour
 
     private void Move()
     {
-        _rigid.MovePosition(_rigid.position + _moveDir);
+        //_rigid.MovePosition(_rigid.position + _moveDir);
+        _tr.Translate(_moveDir * _moveSpeed * Time.deltaTime);
     }
 
     private void FixedUpdate()
