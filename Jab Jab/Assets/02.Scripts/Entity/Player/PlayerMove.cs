@@ -9,7 +9,7 @@ public class PlayerMove : MonoBehaviour
     private Transform   _tr;
     private Rigidbody   _rigid;
     private Vector3     _moveDir;
-    private float       _moveSpeed = 10.0f;
+    [SerializeField] private float       _moveSpeed = 5.0f;
 
     public float MoveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
 
