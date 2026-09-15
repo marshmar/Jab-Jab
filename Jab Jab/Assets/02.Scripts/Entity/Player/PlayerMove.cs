@@ -1,58 +1,72 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody), typeof(PlayerInput))]
 public class PlayerMove : MonoBehaviour
 {
-    private PlayerInput _input;
-    private InputAction _moveAction;
-    private Transform   _tr;
-    private Rigidbody   _rigid;
-    private Vector3     _moveDir;
-    [SerializeField] private float       _moveSpeed = 5.0f;
+    [SerializeField]
+    private Transform _camTr;
 
-    public float MoveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
+    private PlayerInput _input;
+    private Rigidbody _rigid;
+    private Animator _animator;
+    private Transform _tr;
+
+
+    private Vector2 _moveDir;
+
+    [SerializeField]
+    private float _moveSpeed;
 
     private void Awake()
     {
-        _tr = this.GetComponentSafe<Transform>();
-        _rigid = this.GetComponentSafe<Rigidbody>();
         _input = this.GetComponentSafe<PlayerInput>();
+        _rigid = this.GetComponentSafe<Rigidbody>();
+        _animator = this.GetComponentSafe<Animator>();
+        _tr = this.GetComponentSafe<Transform>();   
 
-        InitializeMoveAction();
-    }
+        _moveDir = Vector2.zero;
+        _moveSpeed = 5.0f;
 
-    private void InitializeMoveAction()
-    {
-        _moveAction = _input.actions.FindAction("Move");
-
-        if (_moveAction.IsNull<InputAction>()) return;
-
-        _moveAction.performed += context =>
+        _input.actions["Move"].performed += context =>
         {
-            SetMoveDirection(context);
+            _moveDir = context.ReadValue<Vector2>();
         };
 
-        _moveAction.canceled += context =>
+        _input.actions["Move"].canceled += context =>
         {
-            _moveDir = Vector3.zero;
+            _moveDir = Vector2.zero;
         };
-    }
 
-    private void SetMoveDirection(InputAction.CallbackContext context)
-    {
-        Vector2 contextVec = context.ReadValue<Vector2>();
-        _moveDir = new Vector3(contextVec.x, 0, contextVec.y);
-    }
+        _input.actions["Dodge"].performed += context =>
+        {
+            _animator.SetTrigger("Dodge");
+        };
 
-    private void Move()
-    {
-        //_rigid.MovePosition(_rigid.position + _moveDir);
-        _tr.Translate(_moveDir * _moveSpeed * Time.deltaTime);
+        _camTr.IsNull();
     }
 
     private void FixedUpdate()
     {
-        Move();
+        if(_moveDir != Vector2.zero)
+        {
+            Vector3 camForward = new Vector3(_camTr.forward.x, 0, _camTr.forward.z);
+            Vector3 camRight = new Vector3(_camTr.right.x, 0, _camTr.right.z);
+            Vector3 move = (camForward * (_moveDir.y) + camRight * (_moveDir.x)).normalized;
+
+            Move(move);
+            Rotate(move);
+        }
+        _animator.SetBool("isMoving", _moveDir != Vector2.zero);
+    }
+
+    private void Move(Vector3 move)
+    {
+        _rigid.MovePosition(_rigid.position + move * _moveSpeed * Time.fixedDeltaTime);
+    }
+
+    private void Rotate(Vector3 move)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(move);
+        _tr.rotation = Quaternion.Slerp(_tr.rotation, targetRotation, Time.fixedDeltaTime * 10f);
     }
 }
