@@ -6,7 +6,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Transform _camTr;
 
-    private PlayerInput _input;
+    private InputReader _reader;
     private Rigidbody _rigid;
     private Animator _animator;
     private Transform _tr;
@@ -19,7 +19,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Awake()
     {
-        _input = this.GetComponentSafe<PlayerInput>();
+        _reader = this.GetComponentSafe<InputReader>();
         _rigid = this.GetComponentSafe<Rigidbody>();
         _animator = this.GetComponentSafe<Animator>();
         _tr = this.GetComponentSafe<Transform>();   
@@ -27,27 +27,13 @@ public class PlayerMove : MonoBehaviour
         _moveDir = Vector2.zero;
         _moveSpeed = 5.0f;
 
-        _input.actions["Move"].performed += context =>
-        {
-            _moveDir = context.ReadValue<Vector2>();
-        };
-
-        _input.actions["Move"].canceled += context =>
-        {
-            _moveDir = Vector2.zero;
-        };
-
-        _input.actions["Dodge"].performed += context =>
-        {
-            _animator.SetTrigger("Dodge");
-        };
-
         _camTr.IsNull();
     }
 
     private void FixedUpdate()
     {
-        if(_moveDir != Vector2.zero)
+        _moveDir = _reader.GetCurrent().move;
+        if (_moveDir != Vector2.zero)
         {
             Vector3 camForward = new Vector3(_camTr.forward.x, 0, _camTr.forward.z);
             Vector3 camRight = new Vector3(_camTr.right.x, 0, _camTr.right.z);
@@ -57,7 +43,9 @@ public class PlayerMove : MonoBehaviour
             Rotate(move);
         }
         _animator.SetBool("isMoving", _moveDir != Vector2.zero);
+
     }
+
 
     private void Move(Vector3 move)
     {

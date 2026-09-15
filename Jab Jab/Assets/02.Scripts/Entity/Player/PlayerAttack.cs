@@ -4,24 +4,20 @@ using UnityEngine.InputSystem;
 public class PlayerAttack : MonoBehaviour
 {
 
-    private PlayerInput _input;
+    private InputReader _reader;
     private Animator _animator;
 
     private void Awake()
     {
-        _input = this.GetComponentSafe<PlayerInput>();
+        _reader = this.GetComponentSafe<InputReader>();
         _animator = this.GetComponentSafe<Animator>();
-
-        _input.actions["Attack"].performed += context =>
-        {
-            Attack();
-        };
-
     }
 
-
-    private void Attack()
+    private void FixedUpdate()
     {
-        _animator.SetTrigger("Attack");
+        if(_reader.IsHeld(InputButton.Punch))
+        {
+            _animator.SetTrigger("Attack");
+        }
     }
 }

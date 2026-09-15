@@ -6,6 +6,9 @@ public class MainCam : MonoBehaviour
     [SerializeField]
     private GameObject _player;
 
+    [SerializeField]
+    private InputReader _reader;
+
     [Header("Orbit")]
     [SerializeField]
     private float _distance = 10.0f;
@@ -22,7 +25,6 @@ public class MainCam : MonoBehaviour
 
     private Transform _tr;
     private Transform _playerTr;
-    private InputAction _lookAction;
 
     private float _yaw;
     private float _pitch;
@@ -34,7 +36,6 @@ public class MainCam : MonoBehaviour
         if (_player.IsNull() == false)
         {
             _playerTr = _player.transform;
-            _lookAction = _player.GetComponentSafe<PlayerInput>().actions["Look"];
         }
 
         _pitch = 20.0f;
@@ -47,7 +48,7 @@ public class MainCam : MonoBehaviour
             return;
         }
 
-        Vector2 lookDir = _lookAction.ReadValue<Vector2>();
+        Vector2 lookDir = _reader.ReadLookRaw();
 
         _yaw += lookDir.x * _lookSpeed;
         _pitch = Mathf.Clamp(_pitch + lookDir.y * _lookSpeed, _minPitch, _maxPitch);
