@@ -37,10 +37,12 @@ public class InputReader : MonoBehaviour
     private InputAction _moveAction;
     private InputAction _punchAction;
     private InputAction _lookAction;
+    private InputAction _kickAction;
 
     // long으로 저장 시 최대 48억년 저장 가능(int의 경우 414일 저장 가능)
     private long _currentFrame;
 
+    [SerializeField]
     private InputFrame[] _inputBuffer;
     private const int BufferSize = 120;
     private InputButton _pendingButtons;
@@ -51,9 +53,15 @@ public class InputReader : MonoBehaviour
         _control = new PlayerControl();
         _inputBuffer = new InputFrame[BufferSize];
 
+        BindActions();
+    }
+
+    private void BindActions()
+    {
         _moveAction = _control.PlayerInputAction.Move;
-        _punchAction = _control.PlayerInputAction.Attack;
+        _punchAction = _control.PlayerInputAction.Punch;
         _lookAction = _control.PlayerInputAction.Look;
+        _kickAction = _control.PlayerInputAction.Kick;
     }
 
     private void OnEnable()
@@ -72,6 +80,11 @@ public class InputReader : MonoBehaviour
         if(_punchAction.IsPressed())
         {
             _pendingButtons |= InputButton.Punch;
+        }
+
+        if(_kickAction.IsPressed())
+        {
+            _pendingButtons |= InputButton.Kick;
         }
     }
 

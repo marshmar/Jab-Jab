@@ -55,9 +55,18 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Attack"",
+                    ""name"": ""Punch"",
                     ""type"": ""Button"",
                     ""id"": ""6ba228b0-e728-4389-ae68-decd2190ebe0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Kick"",
+                    ""type"": ""Button"",
+                    ""id"": ""d80fb147-767d-4c3a-9953-42d15aeefd75"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -149,7 +158,18 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack"",
+                    ""action"": ""Punch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""427ede23-cbe4-4162-ae63-1198683a98a7"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Kick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -180,7 +200,8 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_PlayerInputAction_Move = m_PlayerInputAction.FindAction("Move", throwIfNotFound: true);
         m_PlayerInputAction_Look = m_PlayerInputAction.FindAction("Look", throwIfNotFound: true);
         m_PlayerInputAction_Dodge = m_PlayerInputAction.FindAction("Dodge", throwIfNotFound: true);
-        m_PlayerInputAction_Attack = m_PlayerInputAction.FindAction("Attack", throwIfNotFound: true);
+        m_PlayerInputAction_Punch = m_PlayerInputAction.FindAction("Punch", throwIfNotFound: true);
+        m_PlayerInputAction_Kick = m_PlayerInputAction.FindAction("Kick", throwIfNotFound: true);
     }
 
     ~@PlayerControl()
@@ -250,7 +271,8 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInputAction_Move;
     private readonly InputAction m_PlayerInputAction_Look;
     private readonly InputAction m_PlayerInputAction_Dodge;
-    private readonly InputAction m_PlayerInputAction_Attack;
+    private readonly InputAction m_PlayerInputAction_Punch;
+    private readonly InputAction m_PlayerInputAction_Kick;
     public struct PlayerInputActionActions
     {
         private @PlayerControl m_Wrapper;
@@ -258,7 +280,8 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_PlayerInputAction_Move;
         public InputAction @Look => m_Wrapper.m_PlayerInputAction_Look;
         public InputAction @Dodge => m_Wrapper.m_PlayerInputAction_Dodge;
-        public InputAction @Attack => m_Wrapper.m_PlayerInputAction_Attack;
+        public InputAction @Punch => m_Wrapper.m_PlayerInputAction_Punch;
+        public InputAction @Kick => m_Wrapper.m_PlayerInputAction_Kick;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInputAction; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -277,9 +300,12 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Dodge.started += instance.OnDodge;
             @Dodge.performed += instance.OnDodge;
             @Dodge.canceled += instance.OnDodge;
-            @Attack.started += instance.OnAttack;
-            @Attack.performed += instance.OnAttack;
-            @Attack.canceled += instance.OnAttack;
+            @Punch.started += instance.OnPunch;
+            @Punch.performed += instance.OnPunch;
+            @Punch.canceled += instance.OnPunch;
+            @Kick.started += instance.OnKick;
+            @Kick.performed += instance.OnKick;
+            @Kick.canceled += instance.OnKick;
         }
 
         private void UnregisterCallbacks(IPlayerInputActionActions instance)
@@ -293,9 +319,12 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Dodge.started -= instance.OnDodge;
             @Dodge.performed -= instance.OnDodge;
             @Dodge.canceled -= instance.OnDodge;
-            @Attack.started -= instance.OnAttack;
-            @Attack.performed -= instance.OnAttack;
-            @Attack.canceled -= instance.OnAttack;
+            @Punch.started -= instance.OnPunch;
+            @Punch.performed -= instance.OnPunch;
+            @Punch.canceled -= instance.OnPunch;
+            @Kick.started -= instance.OnKick;
+            @Kick.performed -= instance.OnKick;
+            @Kick.canceled -= instance.OnKick;
         }
 
         public void RemoveCallbacks(IPlayerInputActionActions instance)
@@ -327,6 +356,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnDodge(InputAction.CallbackContext context);
-        void OnAttack(InputAction.CallbackContext context);
+        void OnPunch(InputAction.CallbackContext context);
+        void OnKick(InputAction.CallbackContext context);
     }
 }

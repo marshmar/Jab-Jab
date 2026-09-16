@@ -17,7 +17,12 @@ public class PlayerAttack : MonoBehaviour
     {
         if(_reader.IsHeld(InputButton.Punch))
         {
-            _animator.SetTrigger("Attack");
+            _animator.SetTrigger("Punch");
+        }
+
+        if(_reader.IsHeld(InputButton.Kick))
+        {
+            _animator.SetTrigger("Kick");
         }
     }
 }
