@@ -11,5 +11,7 @@ namespace Constants
         public static string JabPunchForwardAnimHash = "JabPunchForward";
         public static string StraightPunchForwardAnimHash = "StraightPunchForward";
         public static string HookPunchForwardAnimHash = "HookPunchForward";
+
+        public static string RoundHouseKickInPlaceAnimHash = "RoundHouseKickInPlace";
     }
 }
