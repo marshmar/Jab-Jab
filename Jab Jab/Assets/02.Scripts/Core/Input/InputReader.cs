@@ -42,7 +42,6 @@ public class InputReader : MonoBehaviour
     // long으로 저장 시 최대 48억년 저장 가능(int의 경우 414일 저장 가능)
     private long _currentFrame;
 
-    [SerializeField]
     private InputFrame[] _inputBuffer;
     private const int BufferSize = 120;
     private InputButton _pendingButtons;
@@ -77,12 +76,12 @@ public class InputReader : MonoBehaviour
     private void Update()
     {
         _pendingMove = _moveAction.ReadValue<Vector2>();
-        if(_punchAction.IsPressed())
+        if(_punchAction.WasPressedThisFrame())
         {
             _pendingButtons |= InputButton.Punch;
         }
 
-        if(_kickAction.IsPressed())
+        if(_kickAction.WasPressedThisFrame())
         {
             _pendingButtons |= InputButton.Kick;
         }
@@ -96,19 +95,44 @@ public class InputReader : MonoBehaviour
         _pendingButtons = 0;
     }
 
-    public bool WasPressed(InputButton button)
+    public bool WasPressedInFrame(InputButton button, int frameCount)
     {
-        if (_currentFrame == (long)0)
+        if (_currentFrame < (long)frameCount)
         {
             return false;   
         }
 
-        int index = (int)(_currentFrame % BufferSize);
-        var current = _inputBuffer[index].buttons;
-        var previous = _inputBuffer[(index - 1 + BufferSize) % BufferSize];
+        int curr = (int)(_currentFrame % BufferSize);
 
-        // TODO: 몇 프레임이 previous로 할 건지 기준 정해서 return 문 수정하기
-        return true;
+        for(int i = 0; i < frameCount; i++)
+        {
+            var previous = (curr - i + BufferSize) % BufferSize;
+            if ((_inputBuffer[previous].buttons & button) != 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void Consume(InputButton button, int frameCount)
+    {
+        if (_currentFrame < (long)frameCount)
+        {
+            return;
+        }
+
+        int curr = (int)(_currentFrame % BufferSize);
+
+        for (int i = 0; i < frameCount; i++)
+        {
+            var previous = (curr - i + BufferSize) % BufferSize;
+            if ((_inputBuffer[previous].buttons & button) != 0)
+            {
+                _inputBuffer[previous].buttons &= ~button;
+                break;
+            }
+        }
     }
 
     public bool IsHeld(InputButton button)

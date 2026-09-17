@@ -10,19 +10,23 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody _rigid;
     private Animator _animator;
     private Transform _tr;
-
-
+    private PlayerAttack _playerAttack;
     private Vector2 _moveDir;
 
     [SerializeField]
     private float _moveSpeed;
+    [SerializeField]
+    private float _moveRotateSpeed = 10.0f;
+    [SerializeField]
+    private float _attackRotateSpeed = 40.0f;
 
     private void Awake()
     {
         _reader = this.GetComponentSafe<InputReader>();
         _rigid = this.GetComponentSafe<Rigidbody>();
         _animator = this.GetComponentSafe<Animator>();
-        _tr = this.GetComponentSafe<Transform>();   
+        _tr = this.GetComponentSafe<Transform>();
+        _playerAttack = this.GetComponentSafe<PlayerAttack>();
 
         _moveDir = Vector2.zero;
         _moveSpeed = 5.0f;
@@ -37,24 +41,36 @@ public class PlayerMove : MonoBehaviour
         {
             Vector3 camForward = new Vector3(_camTr.forward.x, 0, _camTr.forward.z);
             Vector3 camRight = new Vector3(_camTr.right.x, 0, _camTr.right.z);
-            Vector3 move = (camForward * (_moveDir.y) + camRight * (_moveDir.x)).normalized;
+            Vector3 moveDir = (camForward * (_moveDir.y) + camRight * (_moveDir.x)).normalized;
 
-            Move(move);
-            Rotate(move);
+            if(_playerAttack.IsAttacking)
+            {
+                if(_playerAttack.CanRotateBefAttack)
+                {
+                    Rotate(moveDir, _attackRotateSpeed);
+                }
+            }
+            else
+            {
+                Move(moveDir);
+                Rotate(moveDir, _moveRotateSpeed);
+            }
+
+
         }
         _animator.SetBool("isMoving", _moveDir != Vector2.zero);
 
     }
 
 
-    private void Move(Vector3 move)
+    private void Move(Vector3 moveDir)
     {
-        _rigid.MovePosition(_rigid.position + move * _moveSpeed * Time.fixedDeltaTime);
+        _rigid.MovePosition(_rigid.position + moveDir * _moveSpeed * Time.fixedDeltaTime);
     }
 
-    private void Rotate(Vector3 move)
+    private void Rotate(Vector3 moveDir, float speed)
     {
-        Quaternion targetRotation = Quaternion.LookRotation(move);
+        Quaternion targetRotation = Quaternion.LookRotation(moveDir);
         _tr.rotation = Quaternion.Slerp(_tr.rotation, targetRotation, Time.fixedDeltaTime * 10f);
     }
 }
