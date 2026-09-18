@@ -7,7 +7,7 @@ using System;
  *        Script Execution Order를 -99로 설정
  */
 [Flags] 
-public enum Button : ushort
+public enum InputButton : ushort
 {
     None = 0,
     Punch = 1 << 0,
@@ -20,13 +20,13 @@ public enum Button : ushort
 
 public struct InputFrame
 {
-    public InputFrame(Button button, Vector2 dir)
+    public InputFrame(InputButton button, Vector2 dir)
     {
         buttons = button;
         move = dir;
     }
 
-    public Button buttons;
+    public InputButton buttons;
     public Vector2 move;
 }
 
@@ -44,7 +44,7 @@ public class InputReader : MonoBehaviour
 
     private InputFrame[] _inputBuffer;
     private const int BufferSize = 120;
-    private Button _pendingButtons;
+    private InputButton _pendingButtons;
     private Vector2 _pendingMove;
 
     private void Awake()
@@ -78,12 +78,12 @@ public class InputReader : MonoBehaviour
         _pendingMove = _moveAction.ReadValue<Vector2>();
         if(_punchAction.WasPressedThisFrame())
         {
-            _pendingButtons |= Button.Punch;
+            _pendingButtons |= InputButton.Punch;
         }
 
         if(_kickAction.WasPressedThisFrame())
         {
-            _pendingButtons |= Button.Kick;
+            _pendingButtons |= InputButton.Kick;
         }
     }
 
@@ -95,7 +95,7 @@ public class InputReader : MonoBehaviour
         _pendingButtons = 0;
     }
 
-    public bool WasPressedWithIn(Button button, int frameCount)
+    public bool WasPressedWithIn(InputButton button, int frameCount)
     {
         if (_currentFrame < (long)frameCount)
         {
@@ -115,7 +115,7 @@ public class InputReader : MonoBehaviour
         return false;
     }
 
-    public void Consume(Button button, int frameCount)
+    public void Consume(InputButton button, int frameCount)
     {
         if (_currentFrame < (long)frameCount)
         {

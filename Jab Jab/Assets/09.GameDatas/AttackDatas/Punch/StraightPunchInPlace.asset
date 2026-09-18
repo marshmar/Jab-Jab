@@ -16,5 +16,9 @@ MonoBehaviour:
   BusyDuration: 0.5
   CancelStartRatio: 0.8
   ComboLinks:
-  - Button: 1
+  - InputButton: 1
     Next: {fileID: 11400000, guid: 3c7e6cb45b46b9e4eb8c4d8da3d9189f, type: 2}
+  HitStartRatio: 0
+  HitEndRatio: 0
+  HitBoxOffset: {x: 0, y: 0, z: 0}
+  HitBoxSize: {x: 0, y: 0, z: 0}

@@ -16,7 +16,11 @@ MonoBehaviour:
   BusyDuration: 0
   CancelStartRatio: 0
   ComboLinks:
-  - Button: 1
+  - InputButton: 1
     Next: {fileID: 11400000, guid: a0342ba6f66fc3e4fa50775eb374aaba, type: 2}
-  - Button: 2
+  - InputButton: 2
     Next: {fileID: 11400000, guid: 925b2f08e8d8f664f9b1845ea0d64652, type: 2}
+  HitStartRatio: 0
+  HitEndRatio: 0
+  HitBoxOffset: {x: 0, y: 0, z: 0}
+  HitBoxSize: {x: 0, y: 0, z: 0}

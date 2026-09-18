@@ -14,4 +14,9 @@ namespace Constants
 
         public static string RoundHouseKickInPlaceAnimHash = "RoundHouseKickInPlace";
     }
+
+    public static class LayerConstants
+    {
+        public static int EnemyLayer = 1 << 10;
+    }
 }

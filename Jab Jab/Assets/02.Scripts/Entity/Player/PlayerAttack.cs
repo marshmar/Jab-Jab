@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Constants;
+using System.Collections.Generic;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -13,9 +13,11 @@ public class PlayerAttack : MonoBehaviour
     private int _inputBufferFrames = 12;
 
     private AttackData _currentAttackData;
-
+    
     [SerializeField]
     private AttackData _idleData;
+
+    private List<IHittable> _damagedHittables;
 
     public bool IsAttacking
     {
@@ -33,6 +35,7 @@ public class PlayerAttack : MonoBehaviour
         _animator = this.GetComponentSafe<Animator>();
         _comboResetTimer = 0.0f;
         _currentAttackData = _idleData;
+        _damagedHittables = new List<IHittable>();
     }
 
     private void FixedUpdate()
@@ -44,9 +47,17 @@ public class PlayerAttack : MonoBehaviour
             {
                 _isAttacking = false;
             }
+
+            if (_attackTimer >= _currentAttackData.BusyDuration * _currentAttackData.HitStartRatio
+                && _attackTimer <= _currentAttackData.BusyDuration * _currentAttackData.HitEndRatio)
+            {
+                Damage();
+            }
         }
-        
-        if(!_isAttacking && _currentAttackData != _idleData)
+
+
+
+        if (!_isAttacking && _currentAttackData != _idleData)
         {
             _comboResetTimer += Time.fixedDeltaTime;
             if (_comboResetTimer >= 2.0f)
@@ -60,16 +71,14 @@ public class PlayerAttack : MonoBehaviour
         {
             for (int i = 0; i < _currentAttackData.ComboLinks.Length; i++)
             {
-                if(_reader.WasPressedWithIn(_currentAttackData.ComboLinks[i].Button, _inputBufferFrames))
+                if(_reader.WasPressedWithIn(_currentAttackData.ComboLinks[i].InputButton, _inputBufferFrames))
                 {
-                    _reader.Consume(_currentAttackData.ComboLinks[i].Button, _inputBufferFrames);
+                    _reader.Consume(_currentAttackData.ComboLinks[i].InputButton, _inputBufferFrames);
                     Attack(_currentAttackData.ComboLinks[i].Next);
                     break;
                 }
             }
         }
-
-
     }
 
     private void Attack(AttackData attackData)
@@ -80,5 +89,49 @@ public class PlayerAttack : MonoBehaviour
         _attackTimer = 0.0f;
         _comboResetTimer = 0.0f;
         _isAttacking = true;
+
+        _damagedHittables.Clear();
+    }
+
+    private void Damage()
+    {
+
+        Vector3 center = transform.TransformPoint(_currentAttackData.HitBoxOffset);
+        Collider[] enemies = Physics.OverlapBox(center, _currentAttackData.HitBoxSize * 0.5f,
+            transform.rotation, LayerConstants.EnemyLayer);
+
+        
+        foreach(Collider enemy in enemies)
+        {
+            IHittable hittable = enemy.GetComponentInParent<IHittable>();
+
+            if (hittable == null || _damagedHittables.Contains(hittable))
+            {
+                continue;
+            }
+
+            Vector3 myTrans = new Vector3(transform.position.x, 0, transform.position.z);
+            Vector3 targetTrans = new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z);
+            Vector3 dir = (targetTrans - myTrans).normalized;
+            HitData hitData = new HitData(10.0f, dir);
+            hittable.TakeHit(hitData);
+            _damagedHittables.Add(hittable);
+
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_currentAttackData == null)
+            return;
+
+        bool isHitActive = _isAttacking
+            && _attackTimer >= _currentAttackData.BusyDuration * _currentAttackData.HitStartRatio
+            && _attackTimer <= _currentAttackData.BusyDuration * _currentAttackData.HitEndRatio;
+
+        // 이 다음부터 그리는건 전부 캐릭터 로컬 좌표로 해석해라
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.color = isHitActive ? Color.red : Color.green;
+        Gizmos.DrawWireCube(_currentAttackData.HitBoxOffset, _currentAttackData.HitBoxSize);
     }
 }
