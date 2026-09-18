@@ -41,19 +41,19 @@ public class PlayerMove : MonoBehaviour
         {
             Vector3 camForward = new Vector3(_camTr.forward.x, 0, _camTr.forward.z);
             Vector3 camRight = new Vector3(_camTr.right.x, 0, _camTr.right.z);
-            Vector3 moveDir = (camForward * (_moveDir.y) + camRight * (_moveDir.x)).normalized;
+            Vector3 moveInput = (camForward * (_moveDir.y) + camRight * (_moveDir.x)).normalized;
 
             if(_playerAttack.IsAttacking)
             {
-                if(_playerAttack.CanRotateBefAttack)
+                if(_playerAttack.IsInAimWindow)
                 {
-                    Rotate(moveDir, _attackRotateSpeed);
+                    Rotate(moveInput, _attackRotateSpeed);
                 }
             }
             else
             {
-                Move(moveDir);
-                Rotate(moveDir, _moveRotateSpeed);
+                Move(moveInput);
+                Rotate(moveInput, _moveRotateSpeed);
             }
 
 
@@ -63,14 +63,14 @@ public class PlayerMove : MonoBehaviour
     }
 
 
-    private void Move(Vector3 moveDir)
+    private void Move(Vector3 moveInput)
     {
-        _rigid.MovePosition(_rigid.position + moveDir * _moveSpeed * Time.fixedDeltaTime);
+        _rigid.MovePosition(_rigid.position + moveInput * _moveSpeed * Time.fixedDeltaTime);
     }
 
-    private void Rotate(Vector3 moveDir, float speed)
+    private void Rotate(Vector3 moveInput, float speed)
     {
-        Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-        _tr.rotation = Quaternion.Slerp(_tr.rotation, targetRotation, Time.fixedDeltaTime * 10f);
+        Quaternion targetRotation = Quaternion.LookRotation(moveInput);
+        _tr.rotation = Quaternion.Slerp(_tr.rotation, targetRotation, Time.fixedDeltaTime * speed);
     }
 }

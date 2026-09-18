@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9262b95a3723e65478a71b5f86d44ae1, type: 3}
   m_Name: JabPunchInPlace
   m_EditorClassIdentifier: 
-  animName: JabPunchInPlace
-  length: 0.5
-  cancelRatio: 0.8
+  AnimStateName: JabPunchInPlace
+  BusyDuration: 0.5
+  CancelStartRatio: 0.8
+  ComboLinks:
+  - Button: 1
+    Next: {fileID: 11400000, guid: 0c1b71ef472896b498e79dff686ed9c2, type: 2}

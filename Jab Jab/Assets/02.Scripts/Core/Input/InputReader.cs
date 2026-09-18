@@ -7,7 +7,7 @@ using System;
  *        Script Execution Order를 -99로 설정
  */
 [Flags] 
-public enum InputButton : ushort
+public enum Button : ushort
 {
     None = 0,
     Punch = 1 << 0,
@@ -20,13 +20,13 @@ public enum InputButton : ushort
 
 public struct InputFrame
 {
-    public InputFrame(InputButton button, Vector2 dir)
+    public InputFrame(Button button, Vector2 dir)
     {
         buttons = button;
         move = dir;
     }
 
-    public InputButton buttons;
+    public Button buttons;
     public Vector2 move;
 }
 
@@ -44,7 +44,7 @@ public class InputReader : MonoBehaviour
 
     private InputFrame[] _inputBuffer;
     private const int BufferSize = 120;
-    private InputButton _pendingButtons;
+    private Button _pendingButtons;
     private Vector2 _pendingMove;
 
     private void Awake()
@@ -78,12 +78,12 @@ public class InputReader : MonoBehaviour
         _pendingMove = _moveAction.ReadValue<Vector2>();
         if(_punchAction.WasPressedThisFrame())
         {
-            _pendingButtons |= InputButton.Punch;
+            _pendingButtons |= Button.Punch;
         }
 
         if(_kickAction.WasPressedThisFrame())
         {
-            _pendingButtons |= InputButton.Kick;
+            _pendingButtons |= Button.Kick;
         }
     }
 
@@ -95,7 +95,7 @@ public class InputReader : MonoBehaviour
         _pendingButtons = 0;
     }
 
-    public bool WasPressedInFrame(InputButton button, int frameCount)
+    public bool WasPressedWithIn(Button button, int frameCount)
     {
         if (_currentFrame < (long)frameCount)
         {
@@ -115,7 +115,7 @@ public class InputReader : MonoBehaviour
         return false;
     }
 
-    public void Consume(InputButton button, int frameCount)
+    public void Consume(Button button, int frameCount)
     {
         if (_currentFrame < (long)frameCount)
         {
@@ -133,12 +133,6 @@ public class InputReader : MonoBehaviour
                 break;
             }
         }
-    }
-
-    public bool IsHeld(InputButton button)
-    {
-        int index = (int)(_currentFrame % BufferSize);
-        return (_inputBuffer[index].buttons & button) != 0;
     }
 
     public InputFrame GetCurrent()

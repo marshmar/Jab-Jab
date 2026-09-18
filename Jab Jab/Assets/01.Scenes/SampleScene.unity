@@ -733,6 +733,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 330585546}
     - target: {fileID: 8195496606777550483, guid: 0d4616073a81ae34faee8710de62de1f, type: 3}
+      propertyPath: _idleData
+      value: 
+      objectReference: {fileID: 11400000, guid: 3cc8391d3c873f148ac5eb42aadb8ad7, type: 2}
+    - target: {fileID: 8195496606777550483, guid: 0d4616073a81ae34faee8710de62de1f, type: 3}
       propertyPath: _kickCombo.Array.size
       value: 1
       objectReference: {fileID: 0}
