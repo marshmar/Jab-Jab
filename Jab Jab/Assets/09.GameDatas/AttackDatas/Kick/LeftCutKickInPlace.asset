@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: LeftCutKickInPlace
   m_EditorClassIdentifier: 
   AnimStateName: LeftCutKickInPlace
-  BusyDuration: 0.5
-  CancelStartRatio: 0.8
+  BusyDuration: 0.7
+  CancelStartRatio: 0.85
   ComboLinks:
   - InputButton: 2
     Next: {fileID: 11400000, guid: 78b295f644ed4824ebb3a96879880a4e, type: 2}

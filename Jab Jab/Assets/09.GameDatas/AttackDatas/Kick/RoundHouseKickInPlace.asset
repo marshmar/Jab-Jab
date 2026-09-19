@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: RoundHouseKickInPlace
   m_EditorClassIdentifier: 
   AnimStateName: RoundHouseKickInPlace
-  BusyDuration: 0.5
-  CancelStartRatio: 0.8
+  BusyDuration: 0.55
+  CancelStartRatio: 0.85
   ComboLinks:
   - InputButton: 2
     Next: {fileID: 11400000, guid: 84c2599265b8381499a862e49e7def95, type: 2}

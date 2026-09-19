@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: SpinningHookKickInPlace
   m_EditorClassIdentifier: 
   AnimStateName: SpinningHookKickInPlace
-  BusyDuration: 0.5
-  CancelStartRatio: 0.8
+  BusyDuration: 0.8
+  CancelStartRatio: 0.85
   ComboLinks: []
+  HitStartRatio: 0
+  HitEndRatio: 0
+  HitBoxOffset: {x: 0, y: 0, z: 0}
+  HitBoxSize: {x: 0, y: 0, z: 0}

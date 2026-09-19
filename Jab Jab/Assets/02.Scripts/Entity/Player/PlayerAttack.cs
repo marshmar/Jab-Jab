@@ -10,7 +10,7 @@ public class PlayerAttack : MonoBehaviour
     private float _comboResetTimer;
     private float _attackTimer;
     private bool _isAttacking;
-    private int _inputBufferFrames = 12;
+    private int _inputBufferFrames = 18;
 
     private AttackData _currentAttackData;
     
@@ -51,12 +51,12 @@ public class PlayerAttack : MonoBehaviour
             if (_attackTimer >= _currentAttackData.BusyDuration * _currentAttackData.HitStartRatio
                 && _attackTimer <= _currentAttackData.BusyDuration * _currentAttackData.HitEndRatio)
             {
-                Damage();
+                DamageToHittalbes();
             }
         }
 
 
-
+        // 공격 후 2초내에 다시 공격하지 않으면 공격 콤보 리셋
         if (!_isAttacking && _currentAttackData != _idleData)
         {
             _comboResetTimer += Time.fixedDeltaTime;
@@ -69,14 +69,11 @@ public class PlayerAttack : MonoBehaviour
 
         if (!_isAttacking || _attackTimer >= _currentAttackData.BusyDuration * _currentAttackData.CancelStartRatio)
         {
-            for (int i = 0; i < _currentAttackData.ComboLinks.Length; i++)
+            ComboLink comboLink;
+            if(TryFindNextComboLink(_currentAttackData, out comboLink) || TryFindNextComboLink(_idleData, out comboLink))
             {
-                if(_reader.WasPressedWithIn(_currentAttackData.ComboLinks[i].InputButton, _inputBufferFrames))
-                {
-                    _reader.Consume(_currentAttackData.ComboLinks[i].InputButton, _inputBufferFrames);
-                    Attack(_currentAttackData.ComboLinks[i].Next);
-                    break;
-                }
+                _reader.Consume(comboLink.InputButton, _inputBufferFrames);
+                Attack(comboLink.Next);
             }
         }
     }
@@ -93,14 +90,28 @@ public class PlayerAttack : MonoBehaviour
         _damagedHittables.Clear();
     }
 
-    private void Damage()
+    private bool TryFindNextComboLink(AttackData attackData, out ComboLink link)
     {
+        for (int i = 0; i < attackData.ComboLinks.Length; i++)
+        {
+            if (_reader.WasPressedWithIn(attackData.ComboLinks[i].InputButton, _inputBufferFrames))
+            {
+                link = attackData.ComboLinks[i];
+                return true;
+            }
+        }
 
+        link = new ComboLink();
+        return false;
+    }
+
+    private void DamageToHittalbes()
+    {
+        // HitBox를 로컬 좌표로 변환
         Vector3 center = transform.TransformPoint(_currentAttackData.HitBoxOffset);
         Collider[] enemies = Physics.OverlapBox(center, _currentAttackData.HitBoxSize * 0.5f,
             transform.rotation, LayerConstants.EnemyLayerMask);
 
-        
         foreach(Collider enemy in enemies)
         {
             IHittable hittable = enemy.GetComponentInParent<IHittable>();
