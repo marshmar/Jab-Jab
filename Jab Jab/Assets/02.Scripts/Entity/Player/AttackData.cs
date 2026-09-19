@@ -12,4 +12,9 @@ public class AttackData : ScriptableObject
     public float HitEndRatio;               // 공격 판정 종료 시간 비율
     public Vector3 HitBoxOffset;
     public Vector3 HitBoxSize;
+
+    public float Damage;
+    public HitStrength HitStrength;
+
+    public int HitStopFrames;
 }

@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class PlayerAttack : MonoBehaviour
 {
     private InputReader _reader;
-    private Animator _animator;   
+    private Animator _animator;
+    private HitStop _hitStop;
 
     private float _comboResetTimer;
     private float _attackTimer;
@@ -33,6 +34,8 @@ public class PlayerAttack : MonoBehaviour
     {
         _reader = this.GetComponentSafe<InputReader>();
         _animator = this.GetComponentSafe<Animator>();
+        _hitStop = GetComponent<HitStop>();
+
         _comboResetTimer = 0.0f;
         _currentAttackData = _idleData;
         _damagedHittables = new List<IHittable>();
@@ -40,7 +43,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(_isAttacking)
+        if(_isAttacking && !_hitStop.IsFrozen)
         {
             _attackTimer += Time.fixedDeltaTime;
             if (_attackTimer > _currentAttackData.BusyDuration)
@@ -124,10 +127,11 @@ public class PlayerAttack : MonoBehaviour
             Vector3 myTrans = new Vector3(transform.position.x, 0, transform.position.z);
             Vector3 targetTrans = new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z);
             Vector3 dir = (targetTrans - myTrans).normalized;
-            HitData hitData = new HitData(10.0f, dir);
-            hittable.TakeHit(hitData);
-            _damagedHittables.Add(hittable);
 
+            HitData hitData = new HitData(_currentAttackData.Damage, dir, _currentAttackData.HitStrength, _currentAttackData.HitStopFrames);
+            hittable.TakeHit(hitData);
+            _hitStop.Freeze(_currentAttackData.HitStopFrames);
+            _damagedHittables.Add(hittable);
         }
     }
 
