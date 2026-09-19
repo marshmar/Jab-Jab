@@ -1,22 +1,14 @@
-using System;
+using UnityEngine;
 
 namespace Constants
 {
-    public static class AnimConstants
-    {
-        public static string JabPunchInPlaceAnimHash = "JabPunchInPlace";
-        public static string StraightPunchInPlaceAnimHash = "StraightPunchInPlace";
-        public static string HookPunchInPlaceAnimHash = "HookPunchInPlace";
-
-        public static string JabPunchForwardAnimHash = "JabPunchForward";
-        public static string StraightPunchForwardAnimHash = "StraightPunchForward";
-        public static string HookPunchForwardAnimHash = "HookPunchForward";
-
-        public static string RoundHouseKickInPlaceAnimHash = "RoundHouseKickInPlace";
-    }
-
     public static class LayerConstants
     {
-        public static int EnemyLayer = 1 << 10;
+        public const int EnemyLayerMask = 1 << 10;
+    }
+
+    public static class  ExecutionOrderConstants
+    {
+        public const int Input = -50;
     }
 }

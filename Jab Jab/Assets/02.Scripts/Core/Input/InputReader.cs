@@ -1,11 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using Constants;
 
-/*
- * [NOTE] InputReader는 항상 FixedUpdate가 먼저 실행되어야 하기 때문에
- *        Script Execution Order를 -99로 설정
- */
 [Flags] 
 public enum InputButton : ushort
 {
@@ -29,6 +26,12 @@ public struct InputFrame
     public InputButton buttons;
     public Vector2 move;
 }
+
+/*
+ * [NOTE] InputReader는 항상 FixedUpdate가 먼저 실행되어야 하기 때문에
+ *        Script Execution Order를 설정
+ */
+[DefaultExecutionOrder(ExecutionOrderConstants.Input)]
 
 public class InputReader : MonoBehaviour
 {

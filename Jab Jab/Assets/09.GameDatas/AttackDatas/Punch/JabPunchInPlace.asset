@@ -18,7 +18,7 @@ MonoBehaviour:
   ComboLinks:
   - InputButton: 1
     Next: {fileID: 11400000, guid: 0c1b71ef472896b498e79dff686ed9c2, type: 2}
-  HitStartRatio: 0
-  HitEndRatio: 0
+  HitStartRatio: 0.2
+  HitEndRatio: 0.4
   HitBoxOffset: {x: 0, y: 1.4, z: 1}
   HitBoxSize: {x: 0.3, y: 0.3, z: 0.3}

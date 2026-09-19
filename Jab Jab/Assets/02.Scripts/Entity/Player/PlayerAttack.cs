@@ -98,7 +98,7 @@ public class PlayerAttack : MonoBehaviour
 
         Vector3 center = transform.TransformPoint(_currentAttackData.HitBoxOffset);
         Collider[] enemies = Physics.OverlapBox(center, _currentAttackData.HitBoxSize * 0.5f,
-            transform.rotation, LayerConstants.EnemyLayer);
+            transform.rotation, LayerConstants.EnemyLayerMask);
 
         
         foreach(Collider enemy in enemies)
